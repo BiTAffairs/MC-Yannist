@@ -1,0 +1,204 @@
+/* ---------------------------------------------------------
+   Design tokens
+   Concept: a kept ledger / appointment book, not a SaaS dashboard.
+   Warm paper base, ink text, one ochre accent for action/available,
+   clay for booked/blocked, sage for settled/paid.
+--------------------------------------------------------- */
+:root {
+  --paper: #f6f1e7;
+  --paper-raised: #fbf8f2;
+  --ink: #241f1a;
+  --ink-soft: #4a4339;
+  --graphite: #746b5c;
+  --line: #ddd2ba;
+  --line-strong: #c9bb9c;
+
+  --ochre: #b9762f;
+  --ochre-deep: #8f5a22;
+  --clay: #9c3d34;
+  --clay-soft: #f1e0dc;
+  --sage: #4f6b52;
+  --sage-soft: #e4ead9;
+  --amber-soft: #f4e6cf;
+
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius: 3px;
+  --shadow-page: 0 1px 0 var(--line), 0 12px 24px -20px rgba(36, 31, 26, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--ink);
+}
+
+p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  outline: 2px solid var(--ochre);
+  outline-offset: 1px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--graphite);
+  margin-bottom: 6px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 15px;
+  font-weight: 500;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover {
+  background: var(--ochre-deep);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.btn-outline:hover {
+  border-color: var(--ink);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--clay);
+  border-color: var(--clay);
+}
+
+.btn-danger:hover {
+  background: var(--clay-soft);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.tag-available {
+  background: var(--sage-soft);
+  color: var(--sage);
+}
+
+.tag-pending {
+  background: var(--amber-soft);
+  color: var(--ochre-deep);
+}
+
+.tag-booked {
+  background: var(--clay-soft);
+  color: var(--clay);
+}
+
+.tag-cancelled {
+  background: #ece7dc;
+  color: var(--graphite);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+::selection {
+  background: var(--amber-soft);
+}
