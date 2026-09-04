@@ -61,11 +61,14 @@ export default function Dashboard() {
   const reminders = useMemo(() => {
     const today = todayISO()
     const in3 = addDays(today, 3)
+    const in5 = addDays(today, 5)
     const pendingList = bookings.filter((b) => b.status === 'pending')
+    const urgentPendingList = pendingList.filter((b) => b.event_date >= today && b.event_date <= in5)
+    const otherPendingList = pendingList.filter((b) => !(b.event_date >= today && b.event_date <= in5))
     const upcomingList = bookings.filter(
       (b) => b.status === 'approved' && b.event_date >= today && b.event_date <= in3
     )
-    return { pendingList, upcomingList }
+    return { pendingList, urgentPendingList, otherPendingList, upcomingList }
   }, [bookings])
 
   const statusByDate = useMemo(() => {
@@ -127,9 +130,14 @@ export default function Dashboard() {
             fontSize: 14,
           }}
         >
-          {reminders.pendingList.length > 0 && (
+          {reminders.urgentPendingList.length > 0 && (
+            <p style={{ marginBottom: 6, color: 'var(--clay)', fontWeight: 600 }}>
+              ⚠️ {reminders.urgentPendingList.length} pending request{reminders.urgentPendingList.length > 1 ? 's are' : ' is'} for an event within 5 days — still awaiting approval.
+            </p>
+          )}
+          {reminders.otherPendingList.length > 0 && (
             <p style={{ marginBottom: reminders.upcomingList.length ? 6 : 0, color: 'var(--ochre-deep)' }}>
-              ⏳ {reminders.pendingList.length} request{reminders.pendingList.length > 1 ? 's' : ''} awaiting your approval.
+              ⏳ {reminders.otherPendingList.length} other request{reminders.otherPendingList.length > 1 ? 's' : ''} awaiting your approval.
             </p>
           )}
           {reminders.upcomingList.length > 0 && (
