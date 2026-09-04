@@ -22,6 +22,10 @@ export default function PublicPage() {
 
   useEffect(() => {
     loadAvailability()
+    const link = document.querySelector('link[rel="manifest"]')
+    if (link) link.setAttribute('href', '/manifest.json')
+    const titleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+    if (titleMeta) titleMeta.setAttribute('content', 'MC Yannist')
   }, [])
 
   async function loadAvailability() {
