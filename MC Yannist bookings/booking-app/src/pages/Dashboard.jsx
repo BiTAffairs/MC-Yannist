@@ -317,7 +317,7 @@ function Modal({ children, onClose }) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(36, 31, 26, 0.45)',
+        background: 'rgba(0, 0, 0, 0.6)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

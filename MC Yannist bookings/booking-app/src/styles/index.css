@@ -5,28 +5,28 @@
    clay for booked/blocked, sage for settled/paid.
 --------------------------------------------------------- */
 :root {
-  --paper: #f6f1e7;
-  --paper-raised: #fbf8f2;
-  --ink: #241f1a;
-  --ink-soft: #4a4339;
-  --graphite: #746b5c;
-  --line: #ddd2ba;
-  --line-strong: #c9bb9c;
+  --paper: #171029;
+  --paper-raised: #221a3f;
+  --ink: #f4ede0;
+  --ink-soft: #cabfe0;
+  --graphite: #948bb3;
+  --line: #342a5c;
+  --line-strong: #473b78;
 
-  --ochre: #b9762f;
-  --ochre-deep: #8f5a22;
-  --clay: #9c3d34;
-  --clay-soft: #f1e0dc;
-  --sage: #4f6b52;
-  --sage-soft: #e4ead9;
-  --amber-soft: #f4e6cf;
+  --ochre: #d4a24c;
+  --ochre-deep: #b9853a;
+  --clay: #e2685c;
+  --clay-soft: #3a2030;
+  --sage: #6bc48a;
+  --sage-soft: #1c3326;
+  --amber-soft: #3a2f1c;
 
   --font-display: 'Newsreader', Georgia, serif;
   --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 
-  --radius: 3px;
-  --shadow-page: 0 1px 0 var(--line), 0 12px 24px -20px rgba(36, 31, 26, 0.35);
+  --radius: 8px;
+  --shadow-page: 0 1px 0 var(--line), 0 20px 40px -20px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -129,8 +129,9 @@ label {
 }
 
 .btn-primary {
-  background: var(--ink);
+  background: var(--ochre);
   color: var(--paper);
+  font-weight: 600;
 }
 
 .btn-primary:hover {
@@ -189,7 +190,7 @@ label {
 }
 
 .tag-cancelled {
-  background: #ece7dc;
+  background: var(--line);
   color: var(--graphite);
 }
 

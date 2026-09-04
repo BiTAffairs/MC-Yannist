@@ -41,6 +41,7 @@ export default function Login() {
           boxShadow: 'var(--shadow-page)',
         }}
       >
+        <img src="/icon-192.png" alt="MC Yannist" style={{ width: 56, height: 56, borderRadius: 12, marginBottom: 16 }} />
         <h1 style={{ fontSize: 26, marginBottom: 4 }}>MC Yannist Bookings</h1>
         <p style={{ marginBottom: 24, fontSize: 14 }}>
           Sign in to manage your bookings.
