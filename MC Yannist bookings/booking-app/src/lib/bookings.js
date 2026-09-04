@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import { notifyNewBooking } from './notifications'
 
 /* ---------- Public (no auth) ---------- */
 
@@ -20,6 +21,7 @@ export async function submitBookingRequest({
   contact,
   service,
   event_date,
+  venue,
   notes,
 }) {
   const { data, error } = await supabase
@@ -30,6 +32,7 @@ export async function submitBookingRequest({
         contact,
         service,
         event_date,
+        venue,
         notes,
         status: 'pending',
         source: 'client',
@@ -38,6 +41,7 @@ export async function submitBookingRequest({
     .select()
     .single()
   if (error) throw error
+  notifyNewBooking(data) // fire-and-forget — never blocks the client's submission
   return data
 }
 
@@ -57,6 +61,7 @@ export async function createManualBooking({
   contact,
   service,
   event_date,
+  venue,
   amount_charged,
   notes,
   first_payment,
@@ -69,6 +74,7 @@ export async function createManualBooking({
         contact,
         service,
         event_date,
+        venue,
         amount_charged: amount_charged || 0,
         notes,
         status: 'approved',
@@ -93,6 +99,19 @@ export async function updateBookingStatus(id, status) {
   const { data, error } = await supabase
     .from('bookings')
     .update({ status })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+// Full edit — client name, contact, service, venue, date, notes, amount.
+// Any field left out of `fields` is left unchanged.
+export async function updateBookingDetails(id, fields) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .update(fields)
     .eq('id', id)
     .select()
     .single()

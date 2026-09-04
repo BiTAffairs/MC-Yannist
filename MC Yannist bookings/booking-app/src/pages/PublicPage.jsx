@@ -15,7 +15,7 @@ export default function PublicPage() {
   const [statusByDate, setStatusByDate] = useState({})
   const [selectedDate, setSelectedDate] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ client_name: '', contact: '', service: '', notes: '' })
+  const [form, setForm] = useState({ client_name: '', contact: '', service: '', venue: '', notes: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
@@ -57,7 +57,7 @@ export default function PublicPage() {
     try {
       await submitBookingRequest({ ...form, event_date: selectedDate })
       setSubmitted(true)
-      setForm({ client_name: '', contact: '', service: '', notes: '' })
+      setForm({ client_name: '', contact: '', service: '', venue: '', notes: '' })
       loadAvailability()
     } catch (e) {
       setError('Could not submit your request. Please try again.')
@@ -148,6 +148,16 @@ export default function PublicPage() {
               placeholder="e.g. Studio session, consultation…"
               value={form.service}
               onChange={(e) => setForm({ ...form, service: e.target.value })}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="venue">Venue / location</label>
+            <input
+              id="venue"
+              placeholder="Where's the event?"
+              value={form.venue}
+              onChange={(e) => setForm({ ...form, venue: e.target.value })}
             />
           </div>
 

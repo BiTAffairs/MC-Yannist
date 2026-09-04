@@ -6,6 +6,7 @@ create table if not exists bookings (
   contact text,
   service text,
   event_date date not null,
+  venue text,
   amount_charged numeric not null default 0,
   status text not null default 'pending' check (status in ('pending','approved','rejected','cancelled')),
   source text not null default 'client' check (source in ('client','vendor')),

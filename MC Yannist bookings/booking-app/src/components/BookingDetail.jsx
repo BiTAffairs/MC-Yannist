@@ -4,16 +4,34 @@ import {
   addPayment,
   deletePayment,
   updateBookingStatus,
-  updateBookingAmount,
+  updateBookingDetails,
   deleteBooking,
 } from '../lib/bookings'
 
 const money = (n) => `₦${Number(n || 0).toLocaleString()}`
 
+function formatDateTime(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return d.toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
+}
+
 export default function BookingDetail({ booking, onClose, onChanged }) {
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [amount, setAmount] = useState(booking.amount_charged || 0)
+  const [editing, setEditing] = useState(false)
+  const [fields, setFields] = useState({
+    client_name: booking.client_name || '',
+    contact: booking.contact || '',
+    service: booking.service || '',
+    venue: booking.venue || '',
+    event_date: booking.event_date || '',
+    amount_charged: booking.amount_charged || 0,
+    notes: booking.notes || '',
+  })
   const [payAmount, setPayAmount] = useState('')
   const [payMethod, setPayMethod] = useState('cash')
   const [busy, setBusy] = useState(false)
@@ -30,7 +48,8 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
   }
 
   const paid = payments.reduce((s, p) => s + Number(p.amount), 0)
-  const balance = Number(amount || 0) - paid
+  const initial = Number(fields.amount_charged || 0)
+  const balance = initial - paid
 
   async function handleAddPayment(e) {
     e.preventDefault()
@@ -51,10 +70,19 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
     setBusy(false)
   }
 
-  async function handleSaveAmount() {
+  async function handleSaveDetails() {
     setBusy(true)
-    await updateBookingAmount(booking.id, Number(amount))
+    await updateBookingDetails(booking.id, {
+      client_name: fields.client_name,
+      contact: fields.contact,
+      service: fields.service,
+      venue: fields.venue,
+      event_date: fields.event_date,
+      amount_charged: Number(fields.amount_charged || 0),
+      notes: fields.notes,
+    })
     onChanged()
+    setEditing(false)
     setBusy(false)
   }
 
@@ -76,18 +104,83 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-        <div>
-          <h2 style={{ fontSize: 22 }}>{booking.client_name}</h2>
-          <p style={{ fontSize: 14 }}>
-            {booking.event_date} · {booking.service || 'No service noted'}
-          </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4, gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 180 }}>
+          {editing ? (
+            <input
+              value={fields.client_name}
+              onChange={(e) => setFields({ ...fields, client_name: e.target.value })}
+              style={{ fontSize: 20, marginBottom: 6 }}
+            />
+          ) : (
+            <h2 style={{ fontSize: 22 }}>{fields.client_name}</h2>
+          )}
         </div>
-        <button className="btn btn-outline btn-sm" onClick={onClose}>Close</button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-outline btn-sm" onClick={() => setEditing((v) => !v)}>
+            {editing ? 'Cancel edit' : 'Edit'}
+          </button>
+          <button className="btn btn-outline btn-sm" onClick={onClose}>Close</button>
+        </div>
       </div>
 
-      {booking.contact && (
-        <p style={{ fontSize: 13, color: 'var(--graphite)', marginBottom: 16 }}>{booking.contact}</p>
+      {editing ? (
+        <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Phone or email</label>
+            <input value={fields.contact} onChange={(e) => setFields({ ...fields, contact: e.target.value })} />
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Service</label>
+            <input value={fields.service} onChange={(e) => setFields({ ...fields, service: e.target.value })} />
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Venue / location</label>
+            <input value={fields.venue} onChange={(e) => setFields({ ...fields, venue: e.target.value })} />
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Event date</label>
+            <input
+              type="date"
+              value={fields.event_date}
+              onChange={(e) => setFields({ ...fields, event_date: e.target.value })}
+            />
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Amount charged (₦)</label>
+            <input
+              type="number"
+              value={fields.amount_charged}
+              onChange={(e) => setFields({ ...fields, amount_charged: e.target.value })}
+            />
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>Notes</label>
+            <textarea
+              rows={2}
+              value={fields.notes}
+              onChange={(e) => setFields({ ...fields, notes: e.target.value })}
+            />
+          </div>
+          <button className="btn btn-primary btn-sm" onClick={handleSaveDetails} disabled={busy}>
+            Save changes
+          </button>
+        </div>
+      ) : (
+        <div style={{ marginBottom: 16 }}>
+          <p style={{ fontSize: 14 }}>
+            {fields.event_date} · {fields.service || 'No service noted'}
+          </p>
+          {fields.venue && (
+            <p style={{ fontSize: 14, color: 'var(--graphite)' }}>📍 {fields.venue}</p>
+          )}
+          {fields.contact && (
+            <p style={{ fontSize: 13, color: 'var(--graphite)' }}>{fields.contact}</p>
+          )}
+          {fields.notes && (
+            <p style={{ fontSize: 13, color: 'var(--graphite)', marginTop: 4 }}>{fields.notes}</p>
+          )}
+        </div>
       )}
 
       {booking.status === 'pending' && (
@@ -103,25 +196,28 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
 
       <hr className="divider" style={{ margin: '18px 0' }} />
 
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', marginBottom: 16 }}>
-        <div className="field" style={{ marginBottom: 0, flex: 1 }}>
-          <label>Amount charged</label>
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-        </div>
-        <button className="btn btn-outline btn-sm" onClick={handleSaveAmount} disabled={busy}>
-          Save
-        </button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 12 }}>
+        <SummaryBox label="Initial amount" value={money(initial)} />
+        <SummaryBox label="Paid so far" value={money(paid)} accent="var(--sage)" />
+        <SummaryBox label="Balance due" value={money(balance)} accent={balance > 0 ? 'var(--clay)' : 'var(--sage)'} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, marginBottom: 4 }}>
-        <span>Paid so far</span>
-        <span className="mono">{money(paid)}</span>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15, fontWeight: 600, marginBottom: 20 }}>
-        <span>Balance</span>
-        <span className="mono" style={{ color: balance > 0 ? 'var(--clay)' : 'var(--sage)' }}>
-          {money(balance)}
-        </span>
+      <div
+        style={{
+          height: 8,
+          borderRadius: 4,
+          background: 'var(--line)',
+          overflow: 'hidden',
+          marginBottom: 20,
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${initial > 0 ? Math.min(100, (paid / initial) * 100) : 0}%`,
+            background: 'var(--sage)',
+          }}
+        />
       </div>
 
       <h3 style={{ fontSize: 15, marginBottom: 10 }}>Payment history</h3>
@@ -143,7 +239,7 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
               }}
             >
               <span>
-                {p.paid_on} <span style={{ color: 'var(--graphite)' }}>· {p.method}</span>
+                {formatDateTime(p.created_at)} <span style={{ color: 'var(--graphite)' }}>· {p.method}</span>
               </span>
               <span style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <span className="mono">{money(p.amount)}</span>
@@ -159,8 +255,8 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
         </ul>
       )}
 
-      <form onSubmit={handleAddPayment} style={{ display: 'flex', gap: 10, alignItems: 'flex-end', marginBottom: 24 }}>
-        <div className="field" style={{ marginBottom: 0, flex: 1 }}>
+      <form onSubmit={handleAddPayment} style={{ display: 'flex', gap: 10, alignItems: 'flex-end', marginBottom: 24, flexWrap: 'wrap' }}>
+        <div className="field" style={{ marginBottom: 0, flex: 1, minWidth: 140 }}>
           <label>Add payment (₦)</label>
           <input type="number" min="0" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} />
         </div>
@@ -187,6 +283,15 @@ export default function BookingDetail({ booking, onClose, onChanged }) {
           Delete
         </button>
       </div>
+    </div>
+  )
+}
+
+function SummaryBox({ label, value, accent }) {
+  return (
+    <div style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: 4, padding: '10px 12px' }}>
+      <div style={{ fontSize: 12, color: 'var(--graphite)', marginBottom: 4 }}>{label}</div>
+      <div className="mono" style={{ fontSize: 15, color: accent || 'var(--ink)' }}>{value}</div>
     </div>
   )
 }

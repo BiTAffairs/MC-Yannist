@@ -7,6 +7,7 @@ export default function ManualBookingForm({ onCreated, onCancel }) {
     contact: '',
     service: '',
     event_date: '',
+    venue: '',
     amount_charged: '',
     first_payment: '',
     notes: '',
@@ -88,6 +89,15 @@ export default function ManualBookingForm({ onCreated, onCancel }) {
             onChange={(e) => setForm({ ...form, first_payment: e.target.value })}
           />
         </div>
+      </div>
+
+      <div className="field">
+        <label>Venue / location</label>
+        <input
+          placeholder="e.g. Crown Height Pavilion, Benin City"
+          value={form.venue}
+          onChange={(e) => setForm({ ...form, venue: e.target.value })}
+        />
       </div>
 
       <div className="field">
