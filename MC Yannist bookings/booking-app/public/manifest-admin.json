@@ -1,0 +1,25 @@
+{
+  "name": "MC Yannist Admin",
+  "short_name": "MCY Admin",
+  "description": "Admin dashboard for MC Yannist Bookings",
+  "start_url": "/admin/login",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#171029",
+  "theme_color": "#171029",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
