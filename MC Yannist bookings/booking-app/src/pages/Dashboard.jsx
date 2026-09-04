@@ -35,6 +35,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     load()
+    const link = document.querySelector('link[rel="manifest"]')
+    if (link) link.setAttribute('href', '/manifest-admin.json')
+    const titleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+    if (titleMeta) titleMeta.setAttribute('content', 'MCY Admin')
   }, [])
 
   async function load() {
