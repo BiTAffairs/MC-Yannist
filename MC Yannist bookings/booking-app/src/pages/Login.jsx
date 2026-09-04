@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 export default function Login() {
@@ -6,6 +6,13 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const link = document.querySelector('link[rel="manifest"]')
+    if (link) link.setAttribute('href', '/manifest-admin.json')
+    const titleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+    if (titleMeta) titleMeta.setAttribute('content', 'MCY Admin')
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
